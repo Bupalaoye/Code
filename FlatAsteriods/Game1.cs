@@ -25,12 +25,8 @@ namespace FlatAsteriods
 
         private List<Entity> entities;
 
-        private SoundEffect rocketSound;
         private bool displayCollisionCircles = false;
 
-
-        private Vector2[] vertices;
-        private int[] triangles;
         public Game1()
         {
             this.graphics = new GraphicsDeviceManager(this);
@@ -54,7 +50,6 @@ namespace FlatAsteriods
             this.shapes = new Shapes(this);
             this.camera = new Camera(this.screen);
 
-#if false
             // 确保每次允许结果相同
             Random random = new Random(0);
 
@@ -78,23 +73,6 @@ namespace FlatAsteriods
             {
                 Asteroid asteroid = new Asteroid(random, this.camera, CommonDensities.Rock, 0.6f);
                 this.entities.Add(asteroid);
-            }
-#endif
-
-            this.vertices = new Vector2[9];
-            this.vertices[0] = new Vector2(-4, 6);
-            this.vertices[1] = new Vector2(0, 2);
-            this.vertices[2] = new Vector2(2, 5);
-            this.vertices[3] = new Vector2(7, 0);
-            this.vertices[4] = new Vector2(5, -6);
-            this.vertices[5] = new Vector2(3, 3);
-            this.vertices[6] = new Vector2(0, -5);
-            this.vertices[7] = new Vector2(-6, 0);
-            this.vertices[8] = new Vector2(-2, 1);
-            
-            if(!PolygonHelper.Triangulate(this.vertices,out this.triangles,out string errorMessage))
-            {
-                throw new Exception("Unable Triangulate vertices");
             }
 
             base.Initialize();
@@ -124,7 +102,6 @@ namespace FlatAsteriods
             {
                 this.Exit();
             }
-#if false
             if (keyboard.IsKeyClicked(Keys.B))
             {
                 this.displayCollisionCircles = !this.displayCollisionCircles;
@@ -182,7 +159,6 @@ namespace FlatAsteriods
                     }
                 }
             }
-#endif
 
             base.Update(gameTime);
         }
@@ -193,16 +169,11 @@ namespace FlatAsteriods
             this.GraphicsDevice.Clear(Color.Black);
 
             this.shapes.Begin(this.camera);
-            // this.shapes.DrawPolygon(this.vertices, this.transform, 1f, Color.LightSeaGreen);
-#if false
             for (int i = 0; i < this.entities.Count; i++)
             {
                 this.entities[i].Draw(this.shapes, this.displayCollisionCircles);
             }
-#endif
             this.transform = new FlatTransform(new Vector2(0, 0), 0f, 20f);
-            this.shapes.DrawPolygonTriangles(this.vertices, this.triangles, this.transform, Color.White);
-            //this.shapes.DrawPolygon(this.vertices, transform, 1f, Color.White);
             this.shapes.End();
 
             this.screen.Unset();
