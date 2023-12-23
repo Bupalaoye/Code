@@ -236,15 +236,6 @@ namespace Flat1.Graphics
             this.DrawLine(a.X, a.Y, b.X, b.Y, thickness, color);
         }
 
-        public void DrawLine(Vector2 a, Vector2 b, Color color)
-        {
-            this.DrawLine(a.X, a.Y, b.X, b.Y, 1f, color);
-        }
-        public void DrawLine(float ax, float ay, float bx, float by, Color color)
-        {
-            this.DrawLine(ax, ay, bx, by, 1f, color);
-        }
-
         public void DrawLine(float ax, float ay, float bx, float by, float thickness, Color color)
         {
             this.EnsureStarted();
@@ -361,11 +352,6 @@ namespace Flat1.Graphics
             }
         }
 
-        public void DrawCircle(Vector2 center, float radius, int points, float thickness, Color color)
-        {
-            this.DrawCircle(center.X, center.Y, radius, points, thickness, color);
-        }
-
         public void DrawCircle(float x, float y, float radius, int points, float thickness, Color color)
         {
             const int minPoints = 3;
@@ -402,10 +388,6 @@ namespace Flat1.Graphics
             }
         }
 
-        public void DrawCircleFill(Vector2 center, float radius, int points, Color color)
-        {
-            this.DrawCircleFill(center.X, center.Y, radius, points, color);
-        }
         public void DrawCircleFill(float x, float y, float radius, int points, Color color)
         {
             this.EnsureStarted();
@@ -473,21 +455,6 @@ namespace Flat1.Graphics
             }
         }
 
-        public void DrawPolygon(Vector2[] vertices, float thickness, Color color)
-        {
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                Vector2 a = vertices[i];
-                // 注意不要越界就行
-                int j = i + 1;
-                if (j > vertices.Length - 1)
-                    j = 0;
-                Vector2 b = vertices[j];
-                this.DrawLine(a, b, thickness, color);
-            }
-        }
-
-
         public void DrawPolygonFill(Vector2[] vertices, int[] triangleIndices, FlatTransform transform, Color color)
         {
 #if DEBUG
@@ -519,218 +486,6 @@ namespace Flat1.Graphics
             this.shapeCount++;
         }
 
-        public void DrawBoxFill(float x, float y, float width, float height, Color[] colors)
-        {
-            Vector2 min = new Vector2(x, y);
-            Vector2 max = new Vector2(x + width, y + height);
-
-            this.DrawBoxFill(min, max, colors);
-        }
-        public void DrawBoxFill(Vector2 center, float width, float height, float angle, Color color)
-        {
-            this.DrawBoxFill(center,width,height,angle,Vector2.One,color);
-        }
-        public void DrawBoxFill(Vector2 min,Vector2 max, float angle, Color color)
-        {
-            this.EnsureStarted();
-
-            int shapeVertexCount = 4;
-            int shapeIndexCount = 6;
-
-            this.EnsureSpace(shapeVertexCount, shapeIndexCount);
-
-            Utils.Transform(min, new FlatTransform(Vector2.Zero, angle, Vector2.One));
-            Utils.Transform(max, new FlatTransform(Vector2.Zero, angle, Vector2.One));
-
-            Vector3 a = new Vector3(min.X, max.Y, 0f);
-            Vector3 b = new Vector3(max.X, max.Y, 0f);
-            Vector3 c = new Vector3(max.X, min.Y, 0f);
-            Vector3 d = new Vector3(min.X, min.Y, 0f);
-
-            this.indices[this.indexCount++] = 0 + this.vertexCount;
-            this.indices[this.indexCount++] = 1 + this.vertexCount;
-            this.indices[this.indexCount++] = 2 + this.vertexCount;
-            this.indices[this.indexCount++] = 0 + this.vertexCount;
-            this.indices[this.indexCount++] = 2 + this.vertexCount;
-            this.indices[this.indexCount++] = 3 + this.vertexCount;
-
-            this.vertices[this.vertexCount++] = new VertexPositionColor(a, color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(b, color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(c, color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(d, color);
-
-            this.shapeCount++;
-        }
-        public void DrawBoxFill(Vector2 center, float width, float height, float rotation, Vector2 scale, Color color)
-        {
-            this.EnsureStarted();
-
-            int shapeVertexCount = 4;
-            int shapeIndexCount = 6;
-
-            this.EnsureSpace(shapeVertexCount, shapeIndexCount);
-
-            float left = -width * 0.5f;
-            float right = left + width;
-            float bottom = -height * 0.5f;
-            float top = bottom + height;
-
-            // Precompute the trig. functions.
-            float sin = MathF.Sin(rotation);
-            float cos = MathF.Cos(rotation);
-
-            // Vector components:
-
-            float ax = left;
-            float ay = top;
-            float bx = right;
-            float by = top;
-            float cx = right;
-            float cy = bottom;
-            float dx = left;
-            float dy = bottom;
-
-            // Scale transform:
-
-            float sx1 = ax * scale.X;
-            float sy1 = ay * scale.Y;
-            float sx2 = bx * scale.X;
-            float sy2 = by * scale.Y;
-            float sx3 = cx * scale.X;
-            float sy3 = cy * scale.Y;
-            float sx4 = dx * scale.X;
-            float sy4 = dy * scale.Y;
-
-            // Rotation transform:
-
-            float rx1 = sx1 * cos - sy1 * sin;
-            float ry1 = sx1 * sin + sy1 * cos;
-            float rx2 = sx2 * cos - sy2 * sin;
-            float ry2 = sx2 * sin + sy2 * cos;
-            float rx3 = sx3 * cos - sy3 * sin;
-            float ry3 = sx3 * sin + sy3 * cos;
-            float rx4 = sx4 * cos - sy4 * sin;
-            float ry4 = sx4 * sin + sy4 * cos;
-
-            // Translation transform:
-
-            ax = rx1 + center.X;
-            ay = ry1 + center.Y;
-            bx = rx2 + center.X;
-            by = ry2 + center.Y;
-            cx = rx3 + center.X;
-            cy = ry3 + center.Y;
-            dx = rx4 + center.X;
-            dy = ry4 + center.Y;
-
-            this.indices[this.indexCount++] = 0 + this.vertexCount;
-            this.indices[this.indexCount++] = 1 + this.vertexCount;
-            this.indices[this.indexCount++] = 2 + this.vertexCount;
-            this.indices[this.indexCount++] = 0 + this.vertexCount;
-            this.indices[this.indexCount++] = 2 + this.vertexCount;
-            this.indices[this.indexCount++] = 3 + this.vertexCount;
-
-            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(ax, ay, 0f), color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(bx, by, 0f), color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(cx, cy, 0f), color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(dx, dy, 0f), color);
-
-            this.shapeCount++;
-        }
-
-        public void DrawBoxFill(Vector2 min, Vector2 max, Color[] colors)
-        {
-            if (colors is null || colors.Length != 4)
-            {
-                throw new ArgumentOutOfRangeException("colors array must have exactly 4 items.");
-            }
-
-            this.EnsureStarted();
-
-            int shapeVertexCount = 4;
-            int shapeIndexCount = 6;
-
-            this.EnsureSpace(shapeVertexCount, shapeIndexCount);
-
-            Vector3 a = new Vector3(min.X, max.Y, 0f);
-            Vector3 b = new Vector3(max.X, max.Y, 0f);
-            Vector3 c = new Vector3(max.X, min.Y, 0f);
-            Vector3 d = new Vector3(min.X, min.Y, 0f);
-
-            this.indices[this.indexCount++] = 0 + this.vertexCount;
-            this.indices[this.indexCount++] = 1 + this.vertexCount;
-            this.indices[this.indexCount++] = 2 + this.vertexCount;
-            this.indices[this.indexCount++] = 0 + this.vertexCount;
-            this.indices[this.indexCount++] = 2 + this.vertexCount;
-            this.indices[this.indexCount++] = 3 + this.vertexCount;
-
-            this.vertices[this.vertexCount++] = new VertexPositionColor(a, colors[0]);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(b, colors[1]);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(c, colors[2]);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(d, colors[3]);
-
-            this.shapeCount++;
-        }
-
-        public void DrawBoxFill(Vector2 min, Vector2 max, Color color)
-        {
-            this.EnsureStarted();
-
-            int shapeVertexCount = 4;
-            int shapeIndexCount = 6;
-
-            this.EnsureSpace(shapeVertexCount, shapeIndexCount);
-
-            Vector3 a = new Vector3(min.X, max.Y, 0f);
-            Vector3 b = new Vector3(max.X, max.Y, 0f);
-            Vector3 c = new Vector3(max.X, min.Y, 0f);
-            Vector3 d = new Vector3(min.X, min.Y, 0f);
-
-            this.indices[this.indexCount++] = 0 + this.vertexCount;
-            this.indices[this.indexCount++] = 1 + this.vertexCount;
-            this.indices[this.indexCount++] = 2 + this.vertexCount;
-            this.indices[this.indexCount++] = 0 + this.vertexCount;
-            this.indices[this.indexCount++] = 2 + this.vertexCount;
-            this.indices[this.indexCount++] = 3 + this.vertexCount;
-
-            this.vertices[this.vertexCount++] = new VertexPositionColor(a, color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(b, color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(c, color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(d, color);
-
-            this.shapeCount++;
-        }
-
-        public void DrawPolygonFill(Vector2[] vertices, int[] triangleIndices, Color color)
-        {
-#if DEBUG
-            if (vertices is null || triangleIndices is null)
-            {
-                throw new ArgumentNullException("vertices or triangleIndices");
-            }
-            if (vertices.Length == 3 || triangleIndices.Length < 3)
-            {
-                throw new ArgumentOutOfRangeException("vertices or triangleIndices");
-            }
-#endif
-            this.EnsureStarted();
-            this.EnsureSpace(vertices.Length, triangleIndices.Length);
-
-            for (int i = 0; i < triangleIndices.Length; i++)
-            {
-                this.indices[this.indexCount++] = triangleIndices[i] + this.vertexCount;
-            }
-
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                Vector2 vertex = vertices[i];
-                this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(vertex.X, vertex.Y, 0f), color);
-            }
-
-            this.shapeCount++;
-        }
-
-
         public void DrawPolygonTriangles(Vector2[] vecties, int[] triangles, FlatTransform transform, Color color)
         {
             for (int i = 0; i < triangles.Length; i += 3)
@@ -751,79 +506,6 @@ namespace Flat1.Graphics
                 this.DrawLine(vb, vc, 1f, color);
                 this.DrawLine(vc, va, 1f, color);
             }
-        }
-
-        public void DrawBox(Vector2 min, Vector2 max, Color color)
-        {
-            this.DrawLine(min.X, max.Y, max.X, max.Y, color);
-            this.DrawLine(max.X, max.Y, max.X, min.Y, color);
-            this.DrawLine(max.X, min.Y, min.X, min.Y, color);
-            this.DrawLine(min.X, min.Y, min.X, max.Y, color);
-        }
-
-        public void DrawBox(float x, float y, float width, float height, Color color)
-        {
-            Vector2 min = new Vector2(x, y);
-            Vector2 max = new Vector2(x + width, y + height);
-
-            this.DrawBox(min, max, color);
-        }
-
-        public void DrawBox(Vector2 center, float width, float height, Color color)
-        {
-            Vector2 min = new Vector2(center.X - width * 0.5f, center.Y - height * 0.5f);
-            Vector2 max = new Vector2(min.X + width, min.Y + height);
-
-            this.DrawBox(min, max, color);
-        }
-
-        public void DrawBox(Vector2 center, float width, float height, float angle, Color color)
-        {
-            float left = -width * 0.5f;
-            float right = left + width;
-            float bottom = -height * 0.5f;
-            float top = bottom + height;
-
-            // Precompute the trig. functions.
-            float sin = MathF.Sin(angle);
-            float cos = MathF.Cos(angle);
-
-            // Vector components:
-
-            float ax = left;
-            float ay = top;
-            float bx = right;
-            float by = top;
-            float cx = right;
-            float cy = bottom;
-            float dx = left;
-            float dy = bottom;
-
-            // Rotation transform:
-
-            float rx1 = ax * cos - ay * sin;
-            float ry1 = ax * sin + ay * cos;
-            float rx2 = bx * cos - by * sin;
-            float ry2 = bx * sin + by * cos;
-            float rx3 = cx * cos - cy * sin;
-            float ry3 = cx * sin + cy * cos;
-            float rx4 = dx * cos - dy * sin;
-            float ry4 = dx * sin + dy * cos;
-
-            // Translation transform:
-
-            ax = rx1 + center.X;
-            ay = ry1 + center.Y;
-            bx = rx2 + center.X;
-            by = ry2 + center.Y;
-            cx = rx3 + center.X;
-            cy = ry3 + center.Y;
-            dx = rx4 + center.X;
-            dy = ry4 + center.Y;
-            this.DrawLine(ax, ay, bx, by, color);
-            this.DrawLine(bx, by, cx, cy, color);
-            this.DrawLine(cx, cy, dx, dy, color);
-            this.DrawLine(dx, dy, ax, ay, color);
         }
 
     }

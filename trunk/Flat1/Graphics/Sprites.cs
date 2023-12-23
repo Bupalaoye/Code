@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -92,21 +91,6 @@ namespace Flat1.Graphics
         {
             // 注意这里的顺序是先 dest  再 source
             this.sprites.Draw(texture, destinationRectangle, sourceRectangle, color, 0f, Vector2.Zero, SpriteEffects.FlipVertically, 0f);
-        }
-
-        public void DrawString(SpriteFont font, string text, Vector2 position, Color color)
-        {
-            this.sprites.DrawString(font, text, position , color, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
-        }
-
-        public void DrawString(SpriteFont font, StringBuilder text, Vector2 position, Color color)
-        {
-            this.sprites.DrawString(font, text, position, color, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
-        }
-
-        public void DrawString(SpriteFont font, string text, Vector2 position, float rotation, Vector2 origin, float scale, Color color)
-        {
-            this.sprites.DrawString(font, text, position, color, rotation, origin, scale, SpriteEffects.FlipVertically, 0f);
         }
     }
 }

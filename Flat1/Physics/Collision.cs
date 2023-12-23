@@ -25,7 +25,7 @@ namespace Flat1.Physics
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <param name="depth"></param>
-        /// <param name="normal"></param>
+        /// <param name="normal"> 向量方向是a->b </param>
         /// <returns></returns>
         public static bool IntersectCircles(Circle a, Circle b, out float depth, out Vector2 normal)
         {

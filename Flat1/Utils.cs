@@ -136,5 +136,12 @@ namespace Flat1
                 return array[index];
             }
         }
+
+        internal static void Swap(ref int min, ref int max)
+        {
+            int t = min;
+            min = max;
+            max = t;
+        }
     }
 }

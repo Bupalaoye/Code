@@ -41,11 +41,6 @@ namespace Flat1.Graphics
             get { return this.basez; }
         }
 
-        public int Zoom
-        {
-            get { return this.zoom; }
-        }
-
         public Matrix View
         { get { return this.view; } }
 

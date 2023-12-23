@@ -25,11 +25,6 @@ namespace Flat1.Input
             this.currKeyboardState = this.prevKeyboardState;
         }
 
-        public bool IsKeyAvailable
-        {
-            get { return this.currKeyboardState.GetPressedKeyCount() > 0; }
-        }
-
         public void Update()
         {
             this.prevKeyboardState = this.currKeyboardState;

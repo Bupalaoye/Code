@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Flat1.Graphics;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Flat1.Input
 {
@@ -85,15 +85,6 @@ namespace Flat1.Input
             // 需要反转 因为再Screen坐标系是左下角为原点的
             sy = (float)screen.Height - sy;
             return new Vector2(sx, sy);
-        }
-
-        public Vector2 GetMouseWorldPosition(Screen screen, Camera camera)
-        {
-            camera.GetExtents(out Vector2 min, out Vector2 max);
-            Vector2 screenPos = this.GetScreenPosition(screen);
-            screenPos /= camera.Zoom;
-            screenPos -= max;
-            return screenPos;
         }
     }
 }
