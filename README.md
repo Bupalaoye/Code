@@ -7,5 +7,8 @@
 - 学习DrawLine,DrawCircle,DrawPolygon 和三角形
 - 还学习到了物理碰撞 SolveCollision 公式等相关知识
 - 还学到了运算的一些优化,2D平面上点的旋转公式
+### 第二版
+[参考链接](https://www.youtube.com/watch?v=YpwLArBofkk&t=212s)
+[演示视频](https://www.bilibili.com/video/BV1xe411B7TG/)
 - 添加了物体旋转
 - 增加了物体间的摩擦力
